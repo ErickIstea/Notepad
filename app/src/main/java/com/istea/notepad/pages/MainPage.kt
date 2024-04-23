@@ -19,10 +19,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.istea.notepad.ui.theme.NotepadTheme
 
 @Composable
@@ -61,15 +63,29 @@ fun MainNavHost(
         composable("lista") {
             ListaPage(
                 notas = notas,
-                onNotaSelected = { navHostController.navigate("detalle") }
+                onNotaSelected = {
+                    navHostController.navigate("detalle/$it")
+                }
             )
         }
-        composable("detalle") { DetallePage() }
+        composable(
+            route = "detalle/{nota}",
+            arguments = listOf(
+                navArgument( name = "nota"){
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            val nota = it.arguments?.getString("nota")
+            if (nota != null) {
+                DetallePage(nota = nota)
+            }
+        }
         composable("crearNota") {
             CrearNotaPage(
                 onNuevaNota = {
                     navHostController.popBackStack()
-                    notas.add("Hola soy una nota")
+                    notas.add("Hola")
                 }
             )
         }

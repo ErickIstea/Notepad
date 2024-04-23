@@ -18,7 +18,7 @@ import com.istea.notepad.ui.theme.NotepadTheme
 @Composable
 fun ListaPage(
     modifier: Modifier = Modifier,
-    onNotaSelected : () -> Unit,
+    onNotaSelected : (String) -> Unit,
     notas: List<String>
 ) {
     LazyColumn(modifier = modifier){
@@ -26,7 +26,7 @@ fun ListaPage(
             Card (
                 modifier = Modifier
                     .padding(10.dp)
-                    .clickable { onNotaSelected() }
+                    .clickable { onNotaSelected(it) }
             ){
                 Text(
                     modifier = Modifier.padding(10.dp),

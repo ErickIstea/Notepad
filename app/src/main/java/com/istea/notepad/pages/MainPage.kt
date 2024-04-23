@@ -54,7 +54,7 @@ fun MainNavHost(
             )
         }
         composable("detalle") { DetallePage() }
-        composable("crear") { CrearPage() }
+        composable("crearNota") { CrearNotaPage() }
     }
 }
 

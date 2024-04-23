@@ -1,6 +1,5 @@
 package com.istea.notepad.pages
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -9,6 +8,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
@@ -19,26 +20,39 @@ import com.istea.notepad.ui.theme.NotepadTheme
 
 @Composable
 fun MainPage(modifier: Modifier = Modifier) {
+
     val navHostController = rememberNavController()
+    val notas = remember { mutableStateListOf<String>() }
+
     Scaffold(
         modifier = modifier,
         topBar = { MainTopAppBar() }
     ) {
         MainNavHost(
             modifier = Modifier.padding(it),
-            navHostController = navHostController
+            navHostController = navHostController,
+            notas = notas
         )
     }
 }
 
 @Composable
-fun MainNavHost(modifier: Modifier = Modifier, navHostController : NavHostController){
+fun MainNavHost(
+    modifier: Modifier = Modifier,
+    navHostController : NavHostController,
+    notas : List<String>
+) {
     NavHost(
         modifier = modifier,
         navController = navHostController,
         startDestination = "lista"
     ) {
-        composable("lista") { ListaPage() }
+        composable("lista") {
+            ListaPage(
+                notas = notas,
+                onNotaSelected = { navHostController.navigate("detalle") }
+            )
+        }
         composable("detalle") { DetallePage() }
         composable("crear") { CrearPage() }
     }

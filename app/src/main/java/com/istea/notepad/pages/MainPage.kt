@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -20,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.istea.notepad.ui.theme.NotepadTheme
 
@@ -28,11 +30,17 @@ fun MainPage(modifier: Modifier = Modifier) {
 
     val navHostController = rememberNavController()
     val notas = remember { mutableStateListOf<String>() }
+    val navBackStackEntry by navHostController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
 
     Scaffold(
         modifier = modifier,
         topBar = { MainTopAppBar() },
-        floatingActionButton = { BotonCrear(navHostController) }
+        floatingActionButton = {
+            if (currentRoute == "lista") {
+                BotonCrear(navHostController)
+            }
+        }
 
     ) {
         MainNavHost(
@@ -61,7 +69,11 @@ fun MainNavHost(
             )
         }
         composable("detalle") { DetallePage() }
-        composable("crearNota") { CrearNotaPage() }
+        composable("crearNota") {
+            CrearNotaPage(
+                onNuevaNota = { navHostController.popBackStack() }
+            )
+        }
     }
 }
 

@@ -3,7 +3,6 @@ package com.istea.notepad.pages
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -25,13 +24,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.istea.notepad.Nota
 import com.istea.notepad.ui.theme.NotepadTheme
 
 @Composable
 fun MainPage(modifier: Modifier = Modifier) {
 
     val navHostController = rememberNavController()
-    val notas = remember { mutableStateListOf<String>() }
+    val notas = remember { mutableStateListOf<Nota>() }
 
     Scaffold(
         modifier = modifier,
@@ -53,7 +53,7 @@ fun MainPage(modifier: Modifier = Modifier) {
 fun MainNavHost(
     modifier: Modifier = Modifier,
     navHostController : NavHostController,
-    notas : MutableList<String>
+    notas : MutableList<Nota>
 ) {
     NavHost(
         modifier = modifier,
@@ -69,23 +69,25 @@ fun MainNavHost(
             )
         }
         composable(
-            route = "detalle/{nota}",
+            route = "detalle/{notaId}",
             arguments = listOf(
-                navArgument( name = "nota"){
+                navArgument( name = "notaId"){
                     type = NavType.StringType
                 }
             )
         ) {
-            val nota = it.arguments?.getString("nota")
-            if (nota != null) {
+            val notaId = it.arguments?.getString("notaId")
+            if (notaId != null) {
+                val nota = notas.filter { it.titulo == notaId }.first()
                 DetallePage(nota = nota)
             }
         }
         composable("crearNota") {
             CrearNotaPage(
-                onNuevaNota = {
+                onNuevaNota = { titulo, cuerpo ->
+                    val nota = Nota(titulo= titulo, cuerpo = cuerpo)
                     navHostController.popBackStack()
-                    notas.add("Hola")
+                    notas.add(nota)
                 }
             )
         }
